@@ -2,6 +2,19 @@ import { z } from "zod";
 import { cloneAndAnalyzeRepository, fetchGitHubUser } from "@/lib/git";
 import { procedure, router } from "..";
 
+type Response = {
+  success: boolean;
+  data?: {
+    repository: string;
+    top_contributors: {
+      username: string;
+      profile_url?: string;
+      commit_count: number;
+      email: string;
+    }[];
+    error?: unknown;
+  };
+};
 export const leaderboardRouter = router({
   getLeaderboard: procedure
     .input(z.object({ repoUrl: z.string().url() }))
@@ -13,18 +26,24 @@ export const leaderboardRouter = router({
           contributors.map(async ({ email, name, count }) => {
             const user = await fetchGitHubUser(email);
             return {
-              username: user?.username || name,
-              profile_url: user?.profile_url || null,
+              username: (user?.username || name) as string,
+              profile_url: user?.profile_url as string,
               commit_count: count,
               email,
             };
           })
         );
 
-        return { repository: input.repoUrl, top_contributors: leaderboard };
-      } catch (err) {
+        return {
+          success: true,
+          data: { repository: input.repoUrl, top_contributors: leaderboard },
+        } as Response;
+      } catch (err: unknown) {
         console.log(err);
-        throw "url is invalid or is not public";
+        return {
+          success: false,
+          error: err,
+        } as Response;
       }
     }),
 });

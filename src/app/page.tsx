@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { trpc } from "@/server/trpcClient";
+import { trpc } from "@/trpc/trpcClient";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -46,7 +46,7 @@ const LeaderboardPage = () => {
     refetch();
   };
 
-  console.log(isError);
+  console.log(isError, error);
 
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-8">
@@ -84,7 +84,7 @@ const LeaderboardPage = () => {
         )}
       </div>
 
-      {data && (
+      {data?.success && (
         <Card className="shadow-lg border border-gray-200">
           <CardContent className="p-6">
             <h2 className="text-2xl font-semibold text-gray-800 border-b pb-2 mb-4">
@@ -98,34 +98,36 @@ const LeaderboardPage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {data.top_contributors.map((contributor, idx: number) => (
-                  <TableRow
-                    key={idx}
-                    className={`${
-                      idx % 2 === 0 ? "bg-white" : "bg-gray-50"
-                    } hover:bg-blue-50 transition-all`}
-                  >
-                    <TableCell className="px-4 py-2 text-blue-600">
-                      {contributor.profile_url ? (
-                        <a
-                          href={contributor.profile_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 hover:text-blue-700 underline"
-                        >
-                          {contributor.username}
-                        </a>
-                      ) : (
-                        <span className="text-gray-800">
-                          {contributor.username}({contributor.email})
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell className="px-4 py-2 text-gray-800">
-                      {contributor.commit_count}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {(data?.data?.top_contributors ?? []).map(
+                  (contributor, idx: number) => (
+                    <TableRow
+                      key={idx}
+                      className={`${
+                        idx % 2 === 0 ? "bg-white" : "bg-gray-50"
+                      } hover:bg-blue-50 transition-all`}
+                    >
+                      <TableCell className="px-4 py-2 text-blue-600">
+                        {contributor.profile_url ? (
+                          <a
+                            href={contributor.profile_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 hover:text-blue-700 underline"
+                          >
+                            {contributor.username}
+                          </a>
+                        ) : (
+                          <span className="text-gray-800">
+                            {contributor.username}({contributor.email})
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell className="px-4 py-2 text-gray-800">
+                        {contributor.commit_count}
+                      </TableCell>
+                    </TableRow>
+                  )
+                )}
               </TableBody>
             </Table>
           </CardContent>

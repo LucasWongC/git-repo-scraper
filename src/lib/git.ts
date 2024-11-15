@@ -41,6 +41,8 @@ export async function cloneAndAnalyzeRepository(repoUrl: string) {
     .map(([email, { count, name }]) => ({ email, count, name }))
     .sort((a, b) => b.count - a.count);
 
+  fs.rmSync(TEMP_REPO_PATH, { recursive: true, force: true });
+
   return contributors;
 }
 

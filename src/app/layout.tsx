@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { TRPCProvider } from "@/server/TRPCProvider";
+import { TRPCProvider } from "@/trpc/TRPCProvider";
 
 import "./globals.css";
 
