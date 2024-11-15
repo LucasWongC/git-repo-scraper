@@ -38,7 +38,7 @@ export async function cloneAndAnalyzeRepository(repoUrl: string) {
 
   // Sort contributors by commit count
   const contributors = Object.entries(commitCounts)
-    .map(([email, { count }]) => ({ email, count }))
+    .map(([email, { count, name }]) => ({ email, count, name }))
     .sort((a, b) => b.count - a.count);
 
   return contributors;

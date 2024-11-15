@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/server/trpcClient";
 import { Input } from "@/components/ui/input";
@@ -20,12 +20,16 @@ const LeaderboardPage = () => {
   const [error, setError] = useState<string>();
 
   const debouncedRepoUrl = useDebounce(repoUrl, 1000);
+  const isValidRepoUrl = useMemo(
+    () => repoUrl?.indexOf("https://github.com/") == 0,
+    [repoUrl]
+  );
 
-  const { data, refetch, isError, isLoading } =
+  const { data, refetch, isError, isFetching } =
     trpc.leaderboard.getLeaderboard.useQuery(
       { repoUrl: debouncedRepoUrl },
       {
-        enabled: repoUrl?.indexOf("https://github.com/") == 0, // Only call the query when repoUrl is set,
+        enabled: isValidRepoUrl, // Only call the query when repoUrl is set,
         onError: (err) => {
           console.log({ err });
           setError(err?.message);
@@ -66,13 +70,14 @@ const LeaderboardPage = () => {
         />
         <Button
           onClick={fetchLeaderboard}
+          disabled={!isValidRepoUrl || isFetching}
           className={`px-6 py-2 font-medium rounded-md ${
-            isLoading ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600"
+            isFetching ? "bg-blue-400" : "bg-blue-500 hover:bg-blue-600"
           } text-white transition-all`}
         >
-          {isLoading ? "Loading..." : "Fetch Leaderboard"}
+          {isFetching ? "Loading..." : "Fetch Leaderboard"}
         </Button>
-        {error && !isLoading ? (
+        {error && !isFetching ? (
           <div className="text-sm text-red-400">{error}</div>
         ) : (
           <></>

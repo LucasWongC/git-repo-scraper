@@ -10,10 +10,10 @@ export const leaderboardRouter = router({
         const contributors = await cloneAndAnalyzeRepository(input.repoUrl);
 
         const leaderboard = await Promise.all(
-          contributors.map(async ({ email, count }) => {
+          contributors.map(async ({ email, name, count }) => {
             const user = await fetchGitHubUser(email);
             return {
-              username: user?.username || email,
+              username: user?.username || name,
               profile_url: user?.profile_url || null,
               commit_count: count,
               email,
