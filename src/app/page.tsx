@@ -34,6 +34,7 @@ const LeaderboardPage = () => {
           setError(undefined);
         },
         retry: false,
+        refetchOnWindowFocus: false,
       }
     );
 
