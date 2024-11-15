@@ -13,13 +13,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useDebounce } from "@uidotdev/usehooks";
 
 const LeaderboardPage = () => {
   const [repoUrl, setRepoUrl] = useState("");
   const [error, setError] = useState<string>();
+
+  const debouncedRepoUrl = useDebounce(repoUrl, 1000);
+
   const { data, refetch, isError, isLoading } =
     trpc.leaderboard.getLeaderboard.useQuery(
-      { repoUrl },
+      { repoUrl: debouncedRepoUrl },
       {
         enabled: repoUrl?.indexOf("https://github.com/") == 0, // Only call the query when repoUrl is set,
         onError: (err) => {
