@@ -21,8 +21,8 @@ const LeaderboardPage = () => {
 
   const debouncedRepoUrl = useDebounce(repoUrl, 1000);
   const isValidRepoUrl = useMemo(
-    () => repoUrl?.indexOf("https://github.com/") == 0,
-    [repoUrl]
+    () => debouncedRepoUrl?.indexOf("https://github.com/") == 0,
+    [debouncedRepoUrl]
   );
 
   const { data, refetch, isError, isFetching } =
