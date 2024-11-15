@@ -25,7 +25,7 @@ const LeaderboardPage = () => {
     [debouncedRepoUrl]
   );
 
-  const { data, refetch, isError, isFetching } =
+  const { data, refetch, isFetching } =
     trpc.leaderboard.getLeaderboard.useQuery(
       { repoUrl: debouncedRepoUrl },
       {
@@ -45,8 +45,6 @@ const LeaderboardPage = () => {
   const fetchLeaderboard = () => {
     refetch();
   };
-
-  console.log(isError, error);
 
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-8">

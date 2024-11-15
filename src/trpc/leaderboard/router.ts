@@ -40,9 +40,10 @@ export const leaderboardRouter = router({
         } as Response;
       } catch (err: unknown) {
         console.log(err);
+        throw "Repository url is invalid";
         return {
           success: false,
-          error: err,
+          error: "Repository url is invalid",
         } as Response;
       }
     }),
