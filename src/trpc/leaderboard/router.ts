@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { cloneAndAnalyzeRepository, fetchGitHubUser } from "@/lib/git";
+import { cloneAndAnalyzeRepository, getGitHubProfileByEmail } from "@/lib/git";
 import { procedure, router } from "..";
 
 type Response = {
@@ -24,10 +24,10 @@ export const leaderboardRouter = router({
 
         const leaderboard = await Promise.all(
           contributors.map(async ({ email, name, count }) => {
-            const user = await fetchGitHubUser(email);
+            const userProfile = await getGitHubProfileByEmail(email);
             return {
-              username: (user?.username || name) as string,
-              profile_url: user?.profile_url as string,
+              username: userProfile?.username ?? name,
+              profile_url: userProfile?.profileUrl,
               commit_count: count,
               email,
             };

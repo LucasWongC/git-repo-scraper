@@ -1,7 +1,6 @@
 import simpleGit, { SimpleGit } from "simple-git";
 import fs from "fs";
 import path from "path";
-import GitHub from "github-api";
 
 const TEMP_REPO_PATH = path.join(process.cwd(), "temp_repo");
 
@@ -46,14 +45,30 @@ export async function cloneAndAnalyzeRepository(repoUrl: string) {
   return contributors;
 }
 
-export async function fetchGitHubUser(email: string) {
-  const gh = new GitHub({
-    token: process.env.GITHUB_TOKEN,
-  });
+export const getGitHubProfileByEmail = async (email: string) => {
+  const token = process.env.GITHUB_TOKEN; // Replace with your GitHub personal access token
+  const url = `https://api.github.com/search/commits?q=author-email:${email}`;
 
-  const userData = await gh.getUser(email);
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/vnd.github.cloak-preview",
+  };
 
-  console.log(userData);
-
-  return userData;
-}
+  try {
+    const response = await fetch(url, { headers });
+    const data = await response.json();
+    if (data.items && data.items.length > 0) {
+      const { login, html_url } = data.items[0].author;
+      return {
+        username: login,
+        profileUrl: html_url,
+      };
+    } else {
+      console.log("No profile found for this email.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
+  }
+};
