@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Git Leaderboard  
 
-## Getting Started
+## Overview  
+Git Leaderboard is a web application that analyzes a Git repository and generates a leaderboard showcasing contributors ranked by their commit count. This tool provides insights into the contributions of developers in a project, along with links to their GitHub profiles.  
 
-First, run the development server:
+## Features  
+- Clone and analyze any public Git repository.  
+- Display contributors' usernames, commit counts, and profile links.  
+- Sort leaderboard by commit count in descending order.  
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## How It Works  
+1. **Clone Repository**: The specified Git repository is cloned locally.  
+2. **Analyze Commits**: Commits are retrieved, and commit counts are summed by contributors' emails.
+3. **Remove the Cloned Repository** The cloned repository is removed.
+4. **Retrieve Profiles**: GitHub profiles and usernames are fetched using contributors' emails.
+5. **Summarize Data**: Commit counts are aggregated by profile links.
+6. **Display Leaderboard**: Contributors are ranked based on their commit counts.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech Stack  
+- **Frontend**: [Next.js](https://nextjs.org/), [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.dev/)  
+- **Backend**: [tRPC](https://trpc.io/)  
+- **Git Integration**: [simple-git](https://github.com/steveukx/git-js)  
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Setup  
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Prerequisites  
+- Node.js >= 18  
+- Git installed on your system  
 
-## Learn More
+### Installation  
+1. Clone the repository:  
+   ```bash  
+   git clone https://github.com/LucasWongC/git-repo-scraper  
+   cd git-repo-scraper  
+   ```  
 
-To learn more about Next.js, take a look at the following resources:
+2. Install dependencies:  
+   ```bash  
+   yarn install  
+   ```  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Start the development server:  
+   ```bash  
+   yarn dev  
+   ```  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+4. Access the application at:  
+   ```
+   http://localhost:3000  
+   ```  
 
-## Deploy on Vercel
+### Environment Variables  
+Create a `.env.local` file in the root directory and configure the following variables:  
+```env  
+# Example:  
+GITHUB_TOKEN=<your_github_personal_access_token>  
+```  
+> The GitHub API token is used to fetch profile links and usernames for contributors.  
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Usage  
+1. Input the Git repository URL in the application.  
+2. View the contributors' leaderboard with commit counts and profile links sorted by commit count.  
