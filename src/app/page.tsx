@@ -29,7 +29,7 @@ const LeaderboardPage = () => {
     trpc.leaderboard.getLeaderboard.useQuery(
       { repoUrl: debouncedRepoUrl },
       {
-        enabled: isValidRepoUrl, // Only call the query when repoUrl is set,
+        enabled: isValidRepoUrl,
         onError: (err) => {
           console.log({ err });
           setError(err?.message);
@@ -81,56 +81,53 @@ const LeaderboardPage = () => {
           <></>
         )}
       </div>
-
-      {data?.success && (
-        <Card className="shadow-lg border border-gray-200">
-          <CardContent className="p-6">
-            <h2 className="text-2xl font-semibold text-gray-800 border-b pb-2 mb-4">
-              Leaderboard
-            </h2>
-            <Table className="w-full border border-gray-200 rounded-lg overflow-hidden">
-              <TableHeader className="bg-gray-100 text-gray-700">
-                <TableRow>
-                  <TableHead className="px-4 py-2">Contributor</TableHead>
-                  <TableHead className="px-4 py-2">Commits</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {(data?.data?.top_contributors ?? []).map(
-                  (contributor, idx: number) => (
-                    <TableRow
-                      key={idx}
-                      className={`${
-                        idx % 2 === 0 ? "bg-white" : "bg-gray-50"
-                      } hover:bg-blue-50 transition-all`}
-                    >
-                      <TableCell className="px-4 py-2 text-blue-600">
-                        {contributor.profile_url ? (
-                          <a
-                            href={contributor.profile_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-500 hover:text-blue-700 underline"
-                          >
-                            {contributor.username}
-                          </a>
-                        ) : (
-                          <span className="text-gray-800">
-                            {contributor.username}({contributor.email})
-                          </span>
-                        )}
-                      </TableCell>
-                      <TableCell className="px-4 py-2 text-gray-800">
-                        {contributor.commit_count}
-                      </TableCell>
-                    </TableRow>
-                  )
-                )}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
+      <Card className="shadow-lg border border-gray-200">
+        <CardContent className="p-6">
+          <h2 className="text-2xl font-semibold text-gray-800 border-b pb-2 mb-4">
+            Leaderboard
+          </h2>
+          <Table className="w-full border border-gray-200 rounded-lg overflow-hidden">
+            <TableHeader className="bg-gray-100 text-gray-700">
+              <TableRow>
+                <TableHead className="px-4 py-2">Contributor</TableHead>
+                <TableHead className="px-4 py-2">Commits</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {(data?.top_contributors ?? []).map(
+                (contributor, idx: number) => (
+                  <TableRow
+                    key={idx}
+                    className={`${
+                      idx % 2 === 0 ? "bg-white" : "bg-gray-50"
+                    } hover:bg-blue-50 transition-all`}
+                  >
+                    <TableCell className="px-4 py-2 text-blue-600">
+                      {contributor.profile_url ? (
+                        <a
+                          href={contributor.profile_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 hover:text-blue-700 underline"
+                        >
+                          {contributor.username}
+                        </a>
+                      ) : (
+                        <span className="text-gray-800">
+                          {contributor.username}({contributor.email})
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell className="px-4 py-2 text-gray-800">
+                      {contributor.commit_count}
+                    </TableCell>
+                  </TableRow>
+                )
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 };

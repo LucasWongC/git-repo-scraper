@@ -2,19 +2,6 @@ import { z } from "zod";
 import { cloneAndAnalyzeRepository, getGitHubProfileByEmail } from "@/lib/git";
 import { procedure, router } from "..";
 
-type Response = {
-  success: boolean;
-  data?: {
-    repository: string;
-    top_contributors: {
-      username: string;
-      profile_url?: string;
-      commit_count: number;
-      email: string;
-    }[];
-    error?: unknown;
-  };
-};
 export const leaderboardRouter = router({
   getLeaderboard: procedure
     .input(z.object({ repoUrl: z.string().url() }))
@@ -34,17 +21,42 @@ export const leaderboardRouter = router({
           })
         );
 
-        return {
-          success: true,
-          data: { repository: input.repoUrl, top_contributors: leaderboard },
-        } as Response;
+        const commitCounts: Record<
+          string,
+          {
+            username: string;
+            profile_url?: string;
+            commit_count: number;
+            email: string;
+          }
+        > = {};
+
+        leaderboard.forEach((item) => {
+          const { username, profile_url, email, commit_count } = item;
+          if (!commitCounts[username]) {
+            commitCounts[username] = {
+              username: username,
+              profile_url: profile_url,
+              commit_count: 0,
+              email: email,
+            };
+          }
+          commitCounts[username].commit_count += commit_count;
+        });
+
+        const top_contributors = Object.values(commitCounts)
+          .map(({ username, profile_url, email, commit_count }) => ({
+            username,
+            profile_url,
+            email,
+            commit_count,
+          }))
+          .sort((a, b) => b.commit_count - a.commit_count);
+
+        return { repository: input.repoUrl, top_contributors };
       } catch (err: unknown) {
         console.log(err);
         throw "Repository url is invalid";
-        return {
-          success: false,
-          error: "Repository url is invalid",
-        } as Response;
       }
     }),
 });

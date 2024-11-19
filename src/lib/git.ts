@@ -7,22 +7,18 @@ const TEMP_REPO_PATH = path.join(process.cwd(), "temp_repo");
 export async function cloneAndAnalyzeRepository(repoUrl: string) {
   const git: SimpleGit = simpleGit();
 
-  // Clean up any previous cloned repo
   if (fs.existsSync(TEMP_REPO_PATH)) {
     fs.rmdirSync(TEMP_REPO_PATH, { recursive: true });
   }
 
-  // Clone the repository
   await git.clone(repoUrl, TEMP_REPO_PATH);
 
-  // Analyze commits
   const log = await git.cwd(TEMP_REPO_PATH).log();
   const commitCounts: Record<
     string,
     { count: number; email: string; name: string }
   > = {};
 
-  // Count commits by each contributor
   log.all.forEach((commit) => {
     const { author_email, author_name } = commit;
     if (!commitCounts[author_email]) {
@@ -35,7 +31,6 @@ export async function cloneAndAnalyzeRepository(repoUrl: string) {
     commitCounts[author_email].count += 1;
   });
 
-  // Sort contributors by commit count
   const contributors = Object.entries(commitCounts)
     .map(([email, { count, name }]) => ({ email, count, name }))
     .sort((a, b) => b.count - a.count);
@@ -46,7 +41,7 @@ export async function cloneAndAnalyzeRepository(repoUrl: string) {
 }
 
 export const getGitHubProfileByEmail = async (email: string) => {
-  const token = process.env.GITHUB_TOKEN; // Replace with your GitHub personal access token
+  const token = process.env.GITHUB_TOKEN;
   const url = `https://api.github.com/search/commits?q=author-email:${email}`;
 
   const headers = {
