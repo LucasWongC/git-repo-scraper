@@ -58,11 +58,16 @@ export const getGitHubProfileByEmail = async (email: string) => {
     const response = await fetch(url, { headers });
     const data = await response.json();
     if (data.items && data.items.length > 0) {
-      const { login, html_url } = data.items[0].author;
-      return {
-        username: login,
-        profileUrl: html_url,
-      };
+      for (const item of data.items) {
+        if (!item.author) {
+          continue;
+        }
+        const { login, html_url } = item.author;
+        return {
+          username: login,
+          profileUrl: html_url,
+        };
+      }
     } else {
       console.log("No profile found for this email.");
       return null;
