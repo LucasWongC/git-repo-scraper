@@ -31,9 +31,9 @@ export async function cloneAndAnalyzeRepository(repoUrl: string) {
     commitCounts[author_email].count += 1;
   });
 
-  const contributors = Object.entries(commitCounts)
-    .map(([email, { count, name }]) => ({ email, count, name }))
-    .sort((a, b) => b.count - a.count);
+  const contributors = Object.entries(commitCounts).map(
+    ([email, { count, name }]) => ({ email, count, name })
+  );
 
   fs.rmSync(TEMP_REPO_PATH, { recursive: true, force: true });
 
